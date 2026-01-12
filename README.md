@@ -1,6 +1,6 @@
 # OnlyBees Event Booking Clone
 
-**Repository:** [github.com/Shamimkhan1406/onlybees_clone](https://github.com/Shamimkhan1406/onlybees_clone)
+
 
 ## Project Overview
 
@@ -91,6 +91,119 @@ AI tools were used strategically throughout the development process:
 - Optimized validation flow for multi-step forms
 - Improved error propagation from API layer to UI
 - Streamlined total calculation with edge case handling
+
+## Project Structure
+
+```
+onlybees_clone/
+├── lib/
+│   ├── main.dart                      # App entry point, route setup
+│   ├── models/
+│   │   ├── event.dart                 # Event data model
+│   │   ├── ticket_tier.dart           # Ticket tier model
+│   │   └── booking.dart               # Booking/checkout model
+│   ├── providers/
+│   │   ├── ticket_provider.dart       # Ticket state management
+│   │   ├── checkout_provider.dart     # Checkout flow state
+│   │   └── event_provider.dart        # Event data provider
+│   ├── services/
+│   │   └── api_service.dart           # API calls and response handling
+│   ├── screens/
+│   │   ├── event_page.dart            # Main event booking page
+│   │   ├── checkout_page.dart         # Multi-step checkout screen
+│   │   └── confirmation_page.dart     # Booking confirmation screen
+│   ├── widgets/
+│   │   ├── event_header.dart          # Event details header
+│   │   ├── ticket_card.dart           # Individual ticket tier card
+│   │   ├── checkout_summary.dart      # Sticky summary panel
+│   │   ├── quantity_selector.dart     # Increment/decrement control
+│   │   └── shimmer_loader.dart        # Loading placeholder
+│   └── utils/
+│       ├── constants.dart             # API endpoints, colors, strings
+│       └── validators.dart            # Form validation logic
+├── assets/
+│   └── images/                        # Placeholder images (if any)
+├── pubspec.yaml                       # Dependencies and assets
+└── README.md
+```
+
+## Local Setup Guide
+
+### Prerequisites
+
+- Flutter SDK (3.0.0 or higher)
+- Dart SDK (bundled with Flutter)
+- Chrome or any modern browser for web development
+- Git
+
+### Installation Steps
+
+**1. Clone the Repository**
+
+```bash
+git clone https://github.com/Shamimkhan1406/onlybees_clone.git
+cd onlybees_clone
+```
+
+**2. Install Dependencies**
+
+```bash
+flutter pub get
+```
+
+**3. Verify Flutter Web Support**
+
+```bash
+flutter config --enable-web
+flutter devices
+```
+
+Ensure you see Chrome or a web server listed as an available device.
+
+**4. Run the Application**
+
+```bash
+flutter run -d chrome
+```
+
+Or for a specific browser:
+
+```bash
+flutter run -d web-server --web-port=8080
+```
+
+**5. Build for Production (Optional)**
+
+```bash
+flutter build web --release
+```
+
+The output will be in `build/web/` and can be deployed to any static hosting service.
+
+### Troubleshooting
+
+**Issue: API calls failing**
+- Check your internet connection
+- Verify API endpoints in `lib/utils/constants.dart` are accessible
+- Check browser console for CORS errors
+
+**Issue: Hot reload not working**
+- Restart the app with `r` in terminal or full restart with `R`
+- Clear browser cache and reload
+
+**Issue: Dependencies not resolving**
+- Run `flutter clean` then `flutter pub get`
+- Check Flutter version compatibility: `flutter doctor`
+
+### Environment Variables (If Applicable)
+
+If the project uses environment-specific configurations, create a `.env` file:
+
+```
+API_BASE_URL=https://api.example.com
+```
+
+Then load using a package like `flutter_dotenv`.
 
 ## Notes
 
