@@ -14,7 +14,6 @@ class EventScreen extends StatelessWidget {
       body: Column(
         children: [
           _header(), // ONLYBEES text + white divider
-
           // =======================
           // MAIN PAGE CONTENT
           // =======================
@@ -28,26 +27,26 @@ class EventScreen extends StatelessWidget {
                     horizontal: 24,
                     vertical: 32,
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
                     children: [
-                      // =======================
-                      // LEFT SIDE (TEXT CONTENT)
-                      // =======================
-                      Expanded(
-                        flex: 2,
-                        child: _leftSection(),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // =======================
+                          // LEFT SIDE (TEXT CONTENT)
+                          // =======================
+                          Expanded(flex: 2, child: _leftSection()),
+                      
+                          const SizedBox(width: 32),
+                      
+                          // =======================
+                          // RIGHT SIDE (POSTER + PRICE)
+                          // =======================
+                          Expanded(flex: 1, child: _rightSection()),
+                        ],
                       ),
-
-                      const SizedBox(width: 32),
-
-                      // =======================
-                      // RIGHT SIDE (POSTER + PRICE)
-                      // =======================
-                      Expanded(
-                        flex: 1,
-                        child: _rightSection(),
-                      ),
+                      const Divider(color: Colors.white24, thickness: 1),
+                      _footer(),
                     ],
                   ),
                 ),
@@ -56,6 +55,7 @@ class EventScreen extends StatelessWidget {
           ),
         ],
       ),
+      
     );
   }
 
@@ -95,10 +95,7 @@ class EventScreen extends StatelessWidget {
           children: const [
             Icon(Icons.location_on, size: 14, color: Colors.grey),
             SizedBox(width: 6),
-            Text(
-              'Larit, Mawdangdiang',
-              style: TextStyle(color: Colors.grey),
-            ),
+            Text('Larit, Mawdangdiang', style: TextStyle(color: Colors.grey)),
           ],
         ),
 
@@ -119,18 +116,12 @@ class EventScreen extends StatelessWidget {
         // Date & time
         const Text(
           'Sat, Oct 25, 2025, 3:00 PM GMT +5:30',
-          style: TextStyle(
-            color: Colors.greenAccent,
-            fontSize: 16,
-          ),
+          style: TextStyle(color: Colors.greenAccent, fontSize: 16),
         ),
 
         const SizedBox(height: 6),
 
-        const Text(
-          'Shillong',
-          style: TextStyle(color: Colors.grey),
-        ),
+        const Text('Shillong', style: TextStyle(color: Colors.grey)),
 
         const SizedBox(height: 32),
 
@@ -165,6 +156,84 @@ class EventScreen extends StatelessWidget {
             style: TextStyle(height: 1.6),
           ),
         ),
+        const SizedBox(height: 40),
+        // =======================
+        // EVENT GUIDE TITLE
+        // =======================
+        const Text(
+          'Event Guide',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 16),
+        // =======================
+        // EVENT GUIDE CARD
+        // =======================
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1C1C1C),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              _GuideItem(
+                icon: Icons.language,
+                label: 'Language',
+                value: 'English',
+              ),
+              _GuideItem(icon: Icons.schedule, label: 'Duration', value: 'TBI'),
+              _GuideItem(
+                icon: Icons.verified_user,
+                label: 'Entry Allowed',
+                value: '14 yrs & above',
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 40),
+
+        // =======================
+        // ARTIST TITLE
+        // =======================
+        const Text(
+          'Artist',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+
+        const SizedBox(height: 16),
+
+        // =======================
+        // ARTIST CARD
+        // =======================
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                '/Users/shamimkhan/Desktop/Flutter_projects/onlybees_clone/assets/images/artist.jpg', // add this image
+                width: 90,
+                height: 90,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Mohombi',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  'Musician, Singer, Composer and Dancer',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -177,10 +246,7 @@ class EventScreen extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            'assets/images/mohombi.jpg',
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset('assets/images/mohombi.jpg', fit: BoxFit.cover),
         ),
 
         const SizedBox(height: 20),
@@ -204,10 +270,7 @@ class EventScreen extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(
                     '₹799',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -241,10 +304,7 @@ class _TabItem extends StatelessWidget {
   final String title;
   final bool active;
 
-  const _TabItem({
-    required this.title,
-    this.active = false,
-  });
+  const _TabItem({required this.title, this.active = false});
 
   @override
   Widget build(BuildContext context) {
@@ -254,19 +314,121 @@ class _TabItem extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              color: active ? Colors.white : Colors.grey,
-            ),
+            style: TextStyle(color: active ? Colors.white : Colors.grey),
           ),
           const SizedBox(height: 6),
           if (active)
-            Container(
-              height: 2,
-              width: 40,
-              color: Colors.greenAccent,
-            ),
+            Container(height: 2, width: 40, color: Colors.greenAccent),
         ],
       ),
     );
   }
+}
+
+// =======================
+// EVENT GUIDE ITEM
+// =======================
+class _GuideItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _GuideItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.greenAccent, size: 20),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            const SizedBox(height: 4),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+// =======================
+// FOOTER
+// =======================
+Widget _footer() {
+  return Column(
+    children: [
+      const Divider(color: Colors.white24),
+
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 40),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Expanded(
+              child: Text(
+                'ONLYBEES.',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text('Explore',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 12),
+                  Text('About'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text('Support',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 12),
+                  Text('Contact us'),
+                  SizedBox(height: 8),
+                  Text('Refund'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      const Divider(color: Colors.white24),
+
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Copyright © Onlybees 2025, KL & Sons - ONLYBEES',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+            Text(
+              'Privacy Policy     Terms and Conditions',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }
