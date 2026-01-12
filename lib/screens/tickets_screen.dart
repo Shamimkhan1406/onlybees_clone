@@ -32,19 +32,32 @@ class _TicketsScreenState extends State<TicketsScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
-
       body: Column(
         children: [
+          // top right corner close button
+          Padding(
+            padding: const EdgeInsets.only(top: 40, right: 40, bottom: 20),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: // =======================
+              // TOP RIGHT CLOSE BUTTON
+              // =======================
+              Positioned(
+                top: 24,
+                right: 24,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.all(12),
+                    shape: const CircleBorder(),
+                  ),
+                  child: const Icon(Icons.close, color: Colors.black),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),
+          ),
           // =======================
           // MAIN CONTENT
           // =======================
