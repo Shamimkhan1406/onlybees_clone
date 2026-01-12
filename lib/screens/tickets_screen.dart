@@ -50,7 +50,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
     // =======================
     Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 270),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -58,7 +58,7 @@ class _TicketsScreenState extends State<TicketsScreen> {
             // LEFT: TICKETS LIST
             // =======================
             Expanded(
-              flex: 2,
+              flex: 1,
               child: _ticketsList(),
             ),
 
@@ -91,37 +91,40 @@ class _TicketsScreenState extends State<TicketsScreen> {
 // TICKETS LIST (LEFT COLUMN)
 // =======================
 Widget _ticketsList() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Tickets',
-        style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 24),
-
-      Expanded(
-        child: Consumer<TicketProvider>(
-          builder: (context, provider, _) {
-            if (provider.isLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            return ListView(
-              children: provider.sections.map((section) {
-                return TicketCard(
-                  section: section,
-                  onAdd: () => provider.increment(section),
-                  onRemove: () => provider.decrement(section),
-                );
-              }).toList(),
-            );
-          },
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Tickets',
+          style: TextStyle(fontSize: 36,color: Colors.greenAccent, fontWeight: FontWeight.bold),
         ),
-      ),
-    ],
+        const SizedBox(height: 24),
+    
+        Expanded(
+          child: Consumer<TicketProvider>(
+            builder: (context, provider, _) {
+              if (provider.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+    
+              return ListView(
+                children: provider.sections.map((section) {
+                  return TicketCard(
+                    section: section,
+                    onAdd: () => provider.increment(section),
+                    onRemove: () => provider.decrement(section),
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
   );
 }
 // =======================
@@ -146,7 +149,7 @@ Widget _checkoutBar() {
     builder: (context, provider, _) {
       return Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: 32,
+          horizontal: 320,
           vertical: 20,
         ),
         decoration: const BoxDecoration(
@@ -161,7 +164,7 @@ Widget _checkoutBar() {
             Text(
               'Total: ₹${provider.totalPrice}',
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
             ),
