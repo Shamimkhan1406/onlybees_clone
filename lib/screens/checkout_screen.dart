@@ -12,7 +12,12 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   // =======================
-  // FORM CONTROLLERS
+  // FORM KEY
+  // =======================
+  final _formKey = GlobalKey<FormState>();
+
+  // =======================
+  // TEXT CONTROLLERS
   // =======================
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -43,19 +48,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsLeft == 0) {
         timer.cancel();
-        Navigator.pop(context); // ⏪ go back when time ends
+        Navigator.pop(context);
       } else {
-        setState(() {
-          _secondsLeft--;
-        });
+        setState(() => _secondsLeft--);
       }
     });
   }
 
   String get formattedTime {
-    final minutes = (_secondsLeft ~/ 60).toString().padLeft(2, '0');
-    final seconds = (_secondsLeft % 60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
+    final m = (_secondsLeft ~/ 60).toString().padLeft(2, '0');
+    final s = (_secondsLeft % 60).toString().padLeft(2, '0');
+    return '$m:$s';
   }
 
   @override
@@ -63,116 +66,173 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final provider = context.watch<TicketProvider>();
 
     // =======================
-    // GST CALCULATION (18%)
+    // PRICE CALCULATIONS
     // =======================
     final gst = (provider.totalPrice * 0.18).round();
     const bookingFee = 118;
-    final grandTotal = provider.totalPrice + gst + bookingFee;
+    final total = provider.totalPrice + gst + bookingFee;
 
     return Scaffold(
       backgroundColor: Colors.black,
 
-      body: Column(
+      body: Stack(
         children: [
-          // =======================
-          // SCROLLABLE CONTENT
-          // =======================
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 36),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // =======================
-                  // LEFT COLUMN – FORM
-                  // =======================
-                  Expanded(
-                    flex: 2,
-                    child: _leftForm(),
+          Column(
+            children: [
+              // =======================
+              // SCROLLABLE CONTENT
+              // =======================
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 48,
+                    vertical: 36,
                   ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // =======================
+                      // LEFT COLUMN – FORM
+                      // =======================
+                      Expanded(
+                        flex: 2,
+                        child: _leftForm(),
+                      ),
 
-                  const SizedBox(width: 60),
+                      const SizedBox(width: 60),
 
-                  // =======================
-                  // RIGHT COLUMN – SUMMARY
-                  // =======================
-                  Expanded(
-                    flex: 1,
-                    child: _orderSummary(provider, gst, bookingFee, grandTotal),
+                      // =======================
+                      // RIGHT COLUMN – SUMMARY
+                      // =======================
+                      Expanded(
+                        flex: 1,
+                        child: _orderSummary(
+                          provider,
+                          gst,
+                          bookingFee,
+                          total,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+
+              // =======================
+              // FIXED BOTTOM BAR
+              // =======================
+              _bottomCheckoutBar(provider, total),
+            ],
           ),
 
           // =======================
-          // FIXED BOTTOM BAR
+          // TOP RIGHT CLOSE BUTTON
           // =======================
-          _bottomCheckoutBar(grandTotal, provider),
+          Positioned(
+            top: 24,
+            right: 24,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 28),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
         ],
       ),
     );
   }
 
   // ============================================================
-  // LEFT COLUMN – CHECKOUT FORM
+  // LEFT FORM
   // ============================================================
   Widget _leftForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'CHECKOUT',
-          style: const TextStyle(
-            color: Color(0xFF4CFF78),
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'CHECKOUT',
+            style: TextStyle(
+              color: Color(0xFF4CFF78),
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
 
-        const SizedBox(height: 6),
+          const SizedBox(height: 6),
 
-        Text(
-          'Time left: $formattedTime',
-          style: const TextStyle(color: Colors.white70),
-        ),
-
-        const SizedBox(height: 52),
-
-        _inputField(label: 'Name', controller: nameController),
-        const SizedBox(height: 30),
-
-        _inputField(
-          label: 'Email',
-          hint: 'you@example.com',
-          controller: emailController,
-        ),
-
-        const SizedBox(height: 10),
-        const Text(
-          "Note: You'll receive a copy of the tickets here",
-          style: TextStyle(
-            color: Color(0xFF4CFF78),
-            fontSize: 12,
+          Text(
+            'Time left: $formattedTime',
+            style: const TextStyle(color: Colors.white70),
           ),
-        ),
 
-        const SizedBox(height: 30),
+          const SizedBox(height: 52),
 
-        _inputField(
-          label: 'Phone',
-          prefix: '🇮🇳  +91 ',
-          controller: phoneController,
-        ),
+          _inputField(
+            label: 'Name',
+            controller: nameController,
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) {
+                return 'Name is required';
+              }
+              if (v.trim().length < 3) {
+                return 'Name must be at least 3 characters';
+              }
+              return null;
+            },
+          ),
 
-        const SizedBox(height: 44),
+          const SizedBox(height: 30),
 
-        const Text(
-          'By purchasing you’ll receive an account and agree to our '
-          'Terms of use, Privacy Policy and the Ticket Purchase Terms.',
-          style: TextStyle(color: Colors.white54, fontSize: 12),
-        ),
-      ],
+          _inputField(
+            label: 'Email',
+            hint: 'you@example.com',
+            controller: emailController,
+            validator: (v) {
+              if (v == null || v.isEmpty) {
+                return 'Email is required';
+              }
+              final regex =
+                  RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+              if (!regex.hasMatch(v)) {
+                return 'Enter a valid email';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 10),
+          const Text(
+            "Note: You'll receive a copy of the tickets here",
+            style: TextStyle(color: Color(0xFF4CFF78), fontSize: 12),
+          ),
+
+          const SizedBox(height: 30),
+
+          _inputField(
+            label: 'Phone',
+            prefix: '🇮🇳  +91 ',
+            controller: phoneController,
+            validator: (v) {
+              if (v == null || v.isEmpty) {
+                return 'Phone number is required';
+              }
+              if (!RegExp(r'^\d{10}$').hasMatch(v)) {
+                return 'Enter a valid 10-digit number';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 44),
+
+          const Text(
+            'By purchasing you’ll receive an account and agree to our '
+            'Terms of use, Privacy Policy and the Ticket Purchase Terms.',
+            style: TextStyle(color: Colors.white54, fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 
@@ -184,14 +244,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required TextEditingController controller,
     String? hint,
     String? prefix,
+    String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('$label :', style: const TextStyle(color: Colors.white70)),
         const SizedBox(height: 8),
-        TextField(
+        TextFormField(
           controller: controller,
+          validator: validator,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             hintText: hint,
@@ -204,6 +266,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             focusedBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
+            errorStyle: const TextStyle(color: Colors.redAccent),
           ),
         ),
       ],
@@ -211,18 +274,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // ============================================================
-  // RIGHT COLUMN – ORDER SUMMARY
+  // ORDER SUMMARY
   // ============================================================
   Widget _orderSummary(
     TicketProvider provider,
     int gst,
     int bookingFee,
-    int grandTotal,
+    int total,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset('assets/images/mohombi.jpg', height: 220),
+        Image.asset('assets/images/poster.png', height: 220),
 
         const SizedBox(height: 18),
 
@@ -259,7 +322,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${s.name}  x${s.selectedQuantity}',
+                      '${s.name} x${s.selectedQuantity}',
                       style: const TextStyle(color: Colors.white70),
                     ),
                     Text(
@@ -277,7 +340,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
         const Divider(color: Colors.white24, height: 36),
 
-        _summaryRow('Total', '₹$grandTotal', bold: true),
+        _summaryRow('Total', '₹$total', bold: true),
       ],
     );
   }
@@ -305,9 +368,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // ============================================================
-  // BOTTOM BAR – PRINT DATA ON CHECKOUT
+  // BOTTOM BAR
   // ============================================================
-  Widget _bottomCheckoutBar(int total, TicketProvider provider) {
+  Widget _bottomCheckoutBar(TicketProvider provider, int total) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 18),
       decoration: const BoxDecoration(
@@ -325,12 +388,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4CFF78),
               foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 40,
+                vertical: 16,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
             onPressed: () {
+              if (!_formKey.currentState!.validate()) return;
+
               // =======================
               // PRINT DATA TO TERMINAL
               // =======================
@@ -338,17 +406,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               print('Name: ${nameController.text}');
               print('Email: ${emailController.text}');
               print('Phone: ${phoneController.text}');
-              print('Tickets:');
 
               for (final s in provider.sections) {
                 if (s.selectedQuantity > 0) {
                   print(
-                    '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}',
-                  );
+                      '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}');
                 }
               }
 
-              print('Total Amount: ₹$total');
+              print('Total: ₹$total');
               print('----------------------');
             },
             child: const Text('Checkout'),
