@@ -85,7 +85,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 48,
+                    horizontal: 248,
                     vertical: 36,
                   ),
                   child: Row(
@@ -94,24 +94,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       // =======================
                       // LEFT COLUMN – FORM
                       // =======================
-                      Expanded(
-                        flex: 2,
-                        child: _leftForm(),
-                      ),
+                      Expanded(flex: 1, child: _leftForm()),
 
-                      const SizedBox(width: 60),
+                      const SizedBox(width: 90),
 
                       // =======================
                       // RIGHT COLUMN – SUMMARY
                       // =======================
                       Expanded(
                         flex: 1,
-                        child: _orderSummary(
-                          provider,
-                          gst,
-                          bookingFee,
-                          total,
-                        ),
+                        child: _orderSummary(provider, gst, bookingFee, total),
                       ),
                     ],
                   ),
@@ -131,8 +123,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Positioned(
             top: 24,
             right: 24,
-            child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white, size: 28),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.all(12),
+                shape: const CircleBorder(),
+              ),
+              child: const Icon(Icons.close, color: Colors.black),
               onPressed: () => Navigator.pop(context),
             ),
           ),
@@ -154,19 +152,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             'CHECKOUT',
             style: TextStyle(
               color: Color(0xFF4CFF78),
-              fontSize: 30,
+              fontSize: 35,
               fontWeight: FontWeight.bold,
             ),
           ),
 
           const SizedBox(height: 6),
 
-          Text(
-            'Time left: $formattedTime',
-            style: const TextStyle(color: Colors.white70),
+          Row(
+            children: [
+              Text('Time left: ', style: const TextStyle(color: Colors.white)),
+              Text(
+                '$formattedTime',
+                style: const TextStyle(color: Colors.green),
+              ),
+            ],
           ),
 
-          const SizedBox(height: 52),
+          const SizedBox(height: 152),
 
           _inputField(
             label: 'Name',
@@ -192,8 +195,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               if (v == null || v.isEmpty) {
                 return 'Email is required';
               }
-              final regex =
-                  RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+              final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
               if (!regex.hasMatch(v)) {
                 return 'Enter a valid email';
               }
@@ -229,7 +231,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const Text(
             'By purchasing you’ll receive an account and agree to our '
             'Terms of use, Privacy Policy and the Ticket Purchase Terms.',
-            style: TextStyle(color: Colors.white54, fontSize: 12),
+            style: TextStyle(color: Colors.white, fontSize: 12),
           ),
         ],
       ),
@@ -249,7 +251,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('$label :', style: const TextStyle(color: Colors.white70)),
+        Text('$label :', style: const TextStyle(color: Colors.white)),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
@@ -285,21 +287,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset('assets/images/poster.png', height: 220),
+        Row(
+          children: [
+            Image.asset('assets/images/mohombi.jpg', height: 220),
 
-        const SizedBox(height: 18),
+            const SizedBox(height: 18),
 
-        const Text(
-          'Mohombi Live in Shillong',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Mohombi Live in\nShillong',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Larit, Mawdiangdiang',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const Text(
+                    'Sat, Oct 25, 2025',
+                    style: TextStyle(color: Colors.greenAccent),
+                  ),
+                  const Text('Shillong', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+          ],
         ),
-
-        const SizedBox(height: 6),
-        const Text(
-          'Larit, Mawdiangdiang\nSat, Oct 25, 2025\nShillong',
-          style: TextStyle(color: Colors.white70),
-        ),
-
         const SizedBox(height: 34),
 
         const Text(
@@ -335,7 +352,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
 
         const SizedBox(height: 14),
-        _summaryRow('GST (18%)', '₹$gst'),
+        _summaryRow('GST (excl.)', '₹$gst'),
         _summaryRow('Booking Fees', '₹$bookingFee'),
 
         const Divider(color: Colors.white24, height: 36),
@@ -352,7 +369,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white70,
+            color: Colors.white,
             fontWeight: bold ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -372,7 +389,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   // ============================================================
   Widget _bottomCheckoutBar(TicketProvider provider, int total) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 236, vertical: 18),
       decoration: const BoxDecoration(
         color: Color(0xFF1C1C1C),
         border: Border(top: BorderSide(color: Colors.white24)),
@@ -388,10 +405,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4CFF78),
               foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40,
-                vertical: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -410,7 +424,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               for (final s in provider.sections) {
                 if (s.selectedQuantity > 0) {
                   print(
-                      '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}');
+                    '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}',
+                  );
                 }
               }
 
