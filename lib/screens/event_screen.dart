@@ -30,23 +30,60 @@ class EventScreen extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // =======================
-                          // LEFT SIDE (TEXT CONTENT)
-                          // =======================
-                          Expanded(flex: 2, child: _leftSection()),
-                      
-                          const SizedBox(width: 32),
-                      
-                          // =======================
-                          // RIGHT SIDE (POSTER + PRICE)
-                          // =======================
-                          Expanded(flex: 1, child: _rightSection(context)),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // =======================
+                                // LEFT SIDE (TEXT CONTENT)
+                                // =======================
+                                Expanded(flex: 2, child: _leftSection()),
+
+                                const SizedBox(width: 32),
+
+                                // =======================
+                                // RIGHT SIDE (POSTER + PRICE)
+                                // =======================
+                                Expanded(
+                                  flex: 2,
+                                  child: _rightSection(context),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+                            Text(
+                              'Event Guide',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            _eventGuide(),
+                            const SizedBox(height: 16),
+                            // ARTIST TITLE
+                            // =======================
+                            const Text(
+                              'Artist',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            // =======================
+                            const SizedBox(height: 16),
+                            // ARTIST CARD
+                            _artistCard(),
+                          ],
+                        ),
                       ),
-                      const Divider(color: Colors.white24, thickness: 1),
+                      //const Divider(color: Colors.white24, thickness: 1),
+                      const SizedBox(height: 40),
                       _footer(),
                     ],
                   ),
@@ -56,7 +93,6 @@ class EventScreen extends StatelessWidget {
           ),
         ],
       ),
-      
     );
   }
 
@@ -72,13 +108,13 @@ class EventScreen extends StatelessWidget {
           Text(
             'ONLYBEES.',
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 32,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
           ),
           SizedBox(height: 16),
-          Divider(color: Colors.white24, thickness: 1),
+          Divider(color: Colors.white, thickness: 2),
         ],
       ),
     );
@@ -89,14 +125,15 @@ class EventScreen extends StatelessWidget {
   // =======================
   Widget _leftSection() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // IMPORTANT
+      crossAxisAlignment: CrossAxisAlignment.end, // IMPORTANT
       children: [
         // Location row (top small text)
         Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: const [
-            Icon(Icons.location_on, size: 14, color: Colors.grey),
+            Icon(Icons.location_on, size: 14, color: Colors.white),
             SizedBox(width: 6),
-            Text('Larit, Mawdangdiang', style: TextStyle(color: Colors.grey)),
+            Text('Larit, Mawdangdiang', style: TextStyle(color: Colors.white)),
           ],
         ),
 
@@ -104,136 +141,72 @@ class EventScreen extends StatelessWidget {
 
         // Event title
         const Text(
-          'Mohombi Live in Shillong',
+          'Mohombi Live in\nShillong',
+          textAlign: TextAlign.right,
           style: TextStyle(
-            fontSize: 42,
+            fontSize: 50,
             fontWeight: FontWeight.bold,
             height: 1.2,
+            //color: Color(0xFF00FF38),
           ),
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
 
         // Date & time
         const Text(
           'Sat, Oct 25, 2025, 3:00 PM GMT +5:30',
-          style: TextStyle(color: Colors.greenAccent, fontSize: 16),
+          style: TextStyle(color: Color(0xFF00FF38), fontSize: 16),
         ),
 
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
 
-        const Text('Shillong', style: TextStyle(color: Colors.grey)),
+        const Text(
+          'Shillong',
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
 
         const SizedBox(height: 32),
 
         // Tabs placeholder (About | Venue | T&C | FAQ)
-        Row(
-          children: const [
-            _TabItem(title: 'About', active: true),
-            _TabItem(title: 'Venue Layout'),
-            _TabItem(title: 'Terms and Conditions'),
-            _TabItem(title: 'FAQ'),
-          ],
+        SizedBox(
+          width: 500,
+          child: Row(
+            children: const [
+              _TabItem(title: 'About', active: true),
+              _TabItem(title: 'Venue Layout'),
+              _TabItem(title: 'Terms and Conditions'),
+              _TabItem(title: 'FAQ'),
+            ],
+          ),
         ),
 
         const SizedBox(height: 24),
 
         // About card
         Container(
+          height: 270,
+          width: 500,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: const Color(0xFF1C1C1C),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Text(
-            'Get ready for a high-energy night with global pop & Afro-Latin star Mohombi — '
-            'the Congolese-Swedish hitmaker behind chart-toppers like '
-            '"Bumpy Ride", "Coconut Tree" and "mi amor". Expect a power-packed set '
-            'blending pop, dancehall, reggaeton, and Afrobeats with a full live band and dancers.\n\n'
-            'Highlights:\n'
-            '• International hits and exclusive live edits\n'
-            '• State-of-the-art sound & lighting\n'
-            '• Limited VIP zones with premium viewing',
-            style: TextStyle(height: 1.6),
-          ),
-        ),
-        const SizedBox(height: 40),
-        // =======================
-        // EVENT GUIDE TITLE
-        // =======================
-        const Text(
-          'Event Guide',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        // =======================
-        // EVENT GUIDE CARD
-        // =======================
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1C1C1C),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              _GuideItem(
-                icon: Icons.language,
-                label: 'Language',
-                value: 'English',
-              ),
-              _GuideItem(icon: Icons.schedule, label: 'Duration', value: 'TBI'),
-              _GuideItem(
-                icon: Icons.verified_user,
-                label: 'Entry Allowed',
-                value: '14 yrs & above',
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 40),
-
-        // =======================
-        // ARTIST TITLE
-        // =======================
-        const Text(
-          'Artist',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-
-        const SizedBox(height: 16),
-
-        // =======================
-        // ARTIST CARD
-        // =======================
-        Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                'assets/images/artist.jpg', // add this image
-                width: 90,
-                height: 90,
-                fit: BoxFit.cover,
-              ),
+          child: SingleChildScrollView(
+            child: const Text(
+              'Get ready for a high-energy night with global pop & Afro-Latin star Mohombi — '
+              'the Congolese-Swedish hitmaker behind chart-toppers like '
+              '"Bumpy Ride", "Coconut Tree" and "mi amor". Expect a power-packed set '
+              'blending pop, dancehall, reggaeton, and Afrobeats with a full live band and dancers.\n\n'
+              'Highlights:\n'
+              '• International hits and exclusive live edits\n'
+              '• State-of-the-art sound & lighting\n'
+              '• Limited VIP zones with premium viewing'
+              'Come early, clear security fast, and secure your spot up front.'
+              'This is one for the books!',
+              style: TextStyle(height: 1.6),
             ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Mohombi',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 6),
-                Text(
-                  'Musician, Singer, Composer and Dancer',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ],
     );
@@ -253,10 +226,11 @@ class EventScreen extends StatelessWidget {
         const SizedBox(height: 20),
 
         Container(
+          height: 140,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: const Color(0xFF1C1C1C),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -264,24 +238,25 @@ class EventScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
+                  const SizedBox(height: 8),
                   Text(
                     'STARTING',
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: TextStyle(color: Colors.white, fontSize: 8,fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 4),
                   Text(
                     '₹799',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.greenAccent,
+                  backgroundColor: Color( 0xFF00FF38),
                   foregroundColor: Colors.black,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 28,
-                    vertical: 16,
+                    horizontal: 48,
+                    vertical: 24,
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -351,7 +326,7 @@ class _GuideItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.greenAccent, size: 20),
+        Icon(icon, color: Color( 0xFF00FF38), size: 20),
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,13 +344,78 @@ class _GuideItem extends StatelessWidget {
   }
 }
 
+Widget _artistCard() {
+  return // =======================
+  // ARTIST CARD
+  // =======================
+  Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.asset(
+          'assets/images/artist.jpg', // add this image
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+        ),
+      ),
+      const SizedBox(width: 26),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const [
+          SizedBox(height: 12),
+          Text(
+            'Mohombi',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 2),
+          Text(
+            'Musician, Singer, Composer and Dancer',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+Widget _eventGuide() {
+  return // =======================
+  // EVENT GUIDE CARD
+  // =======================
+  Container(
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+    decoration: BoxDecoration(
+      color: const Color(0xFF1C1C1C),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: const [
+        SizedBox(width: 8),
+        _GuideItem(icon: Icons.translate, label: 'Language', value: 'English'),
+        SizedBox(width: 38),
+        _GuideItem(icon: Icons.schedule, label: 'Duration', value: 'TBI'),
+        SizedBox(width: 38),
+        _GuideItem(
+          icon: Icons.airplane_ticket,
+          label: 'Entry Allowed',
+          value: '14 yrs & above',
+        ),
+        SizedBox(width: 38),
+      ],
+    ),
+  );
+}
+
 // =======================
 // FOOTER
 // =======================
 Widget _footer() {
   return Column(
     children: [
-      const Divider(color: Colors.white24),
+      const Divider(color: Colors.white, thickness: 2),
 
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 40),
@@ -385,18 +425,17 @@ Widget _footer() {
             const Expanded(
               child: Text(
                 'ONLYBEES.',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
             ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  Text('Explore',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Explore',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                  ),
                   SizedBox(height: 12),
                   Text('About'),
                 ],
@@ -406,8 +445,10 @@ Widget _footer() {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  Text('Support',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Support',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
+                  ),
                   SizedBox(height: 12),
                   Text('Contact us'),
                   SizedBox(height: 8),
@@ -419,7 +460,7 @@ Widget _footer() {
         ),
       ),
 
-      const Divider(color: Colors.white24),
+      const Divider(color: Colors.white, thickness: 2),
 
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
