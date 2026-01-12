@@ -4,6 +4,8 @@ class SectionModel {
   final int price;
   final String info;
   final int availableQuantity;
+
+  // 👇 THIS FIELD IS REQUIRED
   int selectedQuantity;
 
   SectionModel({
@@ -17,11 +19,12 @@ class SectionModel {
 
   factory SectionModel.fromJson(Map<String, dynamic> json) {
     return SectionModel(
-      id: json['_id']?.toString() ?? '',
-      name: json['name'] ?? '',
-      price: (json['price'] ?? 0).toInt(),
-      info: json['info'] ?? '',
-      availableQuantity: (json['availableQuantity'] ?? 0).toInt(),
+      id: json['_id'],
+      name: json['name'],
+      price: json['price'],
+      info: json['info'],
+      availableQuantity: json['availableQuantity'],
+      selectedQuantity: 0,
     );
   }
 }

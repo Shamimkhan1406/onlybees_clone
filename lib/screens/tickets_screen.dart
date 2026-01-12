@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onlybees_clone/screens/checkout_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/ticket_provider.dart';
 import '../widgets/ticket_card.dart';
@@ -14,7 +15,6 @@ class TicketsScreen extends StatefulWidget {
 // STATE CLASS (IMPORTANT)
 // =======================
 class _TicketsScreenState extends State<TicketsScreen> {
-
   // 🔹 STEP 2: initState GOES HERE
   @override
   void initState() {
@@ -44,45 +44,38 @@ class _TicketsScreenState extends State<TicketsScreen> {
       ),
 
       body: Column(
-  children: [
-    // =======================
-    // MAIN CONTENT
-    // =======================
-    Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 270),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // =======================
-            // LEFT: TICKETS LIST
-            // =======================
-            Expanded(
-              flex: 1,
-              child: _ticketsList(),
-            ),
+        children: [
+          // =======================
+          // MAIN CONTENT
+          // =======================
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 270),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // =======================
+                  // LEFT: TICKETS LIST
+                  // =======================
+                  Expanded(flex: 1, child: _ticketsList()),
 
-            const SizedBox(width: 32),
+                  const SizedBox(width: 32),
 
-            // =======================
-            // RIGHT: VENUE LAYOUT IMAGE
-            // =======================
-            Expanded(
-              flex: 1,
-              child: _venueLayout(),
+                  // =======================
+                  // RIGHT: VENUE LAYOUT IMAGE
+                  // =======================
+                  Expanded(flex: 1, child: _venueLayout()),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+
+          // =======================
+          // BOTTOM CHECKOUT BAR
+          // =======================
+          _checkoutBar(),
+        ],
       ),
-    ),
-
-    // =======================
-    // BOTTOM CHECKOUT BAR
-    // =======================
-    _checkoutBar(),
-  ],
-),
-
     );
   }
 }
@@ -98,27 +91,30 @@ Widget _ticketsList() {
       children: [
         const Text(
           'Tickets',
-          style: TextStyle(fontSize: 36,color: Colors.greenAccent, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 36,
+            color: Colors.greenAccent,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 24),
-    
+
         Expanded(
           child: Consumer<TicketProvider>(
             builder: (context, provider, _) {
               if (provider.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
-    
+
               return ListView(
-                children: provider.sections.map((section) {
-                  return TicketCard(
-                    section: section,
-                    onAdd: () => provider.increment(section),
-                    onRemove: () => provider.decrement(section),
-                  );
-                }).toList(),
+                children:
+                    provider.sections.map((section) {
+                      return TicketCard(
+                        section: section,
+                        onAdd: () => provider.increment(section),
+                        onRemove: () => provider.decrement(section),
+                      );
+                    }).toList(),
               );
             },
           ),
@@ -127,6 +123,7 @@ Widget _ticketsList() {
     ),
   );
 }
+
 // =======================
 // VENUE LAYOUT (RIGHT COLUMN)
 // =======================
@@ -134,13 +131,11 @@ Widget _venueLayout() {
   return Column(
     children: [
       const SizedBox(height: 48),
-      Image.asset(
-        'assets/images/venue_layout.png',
-        fit: BoxFit.contain,
-      ),
+      Image.asset('assets/images/venue_layout.png', fit: BoxFit.contain),
     ],
   );
 }
+
 // =======================
 // BOTTOM CHECKOUT BAR
 // =======================
@@ -148,25 +143,17 @@ Widget _checkoutBar() {
   return Consumer<TicketProvider>(
     builder: (context, provider, _) {
       return Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 320,
-          vertical: 20,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 320, vertical: 20),
         decoration: const BoxDecoration(
           color: Color(0xFF1C1C1C),
-          border: Border(
-            top: BorderSide(color: Colors.white24),
-          ),
+          border: Border(top: BorderSide(color: Colors.white24)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'Total: ₹${provider.totalPrice}',
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -180,7 +167,17 @@ Widget _checkoutBar() {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              onPressed: provider.totalTickets > 0 ? () {} : null,
+              onPressed:
+                  provider.totalTickets > 0
+                      ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CheckoutScreen(),
+                          ),
+                        );
+                      }
+                      : null,
               child: const Text('Proceed'),
             ),
           ],
@@ -189,4 +186,3 @@ Widget _checkoutBar() {
     },
   );
 }
-
