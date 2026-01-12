@@ -106,7 +106,7 @@ Widget _ticketsList() {
           'Tickets',
           style: TextStyle(
             fontSize: 36,
-            color: Colors.greenAccent,
+            color: Color( 0xFF00FF38),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -143,7 +143,7 @@ Widget _ticketsList() {
 Widget _venueLayout() {
   return Column(
     children: [
-      const SizedBox(height: 48),
+      const SizedBox(height: 58),
       Image.asset('assets/images/venue_layout.png', fit: BoxFit.contain),
     ],
   );
@@ -156,10 +156,14 @@ Widget _checkoutBar() {
   return Consumer<TicketProvider>(
     builder: (context, provider, _) {
       return Container(
+        height: 120,
         padding: const EdgeInsets.symmetric(horizontal: 320, vertical: 20),
         decoration: const BoxDecoration(
           color: Color(0xFF1C1C1C),
-          border: Border(top: BorderSide(color: Colors.white24)),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -170,11 +174,11 @@ Widget _checkoutBar() {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent,
+                backgroundColor: Color( 0xFF00FF38),
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
+                  horizontal: 52,
+                  vertical: 26,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
