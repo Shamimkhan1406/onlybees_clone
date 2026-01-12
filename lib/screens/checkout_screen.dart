@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:onlybees_clone/widgets/coupon_code_widget.dart';
 import 'package:provider/provider.dart';
 import '../providers/ticket_provider.dart';
 
@@ -22,6 +23,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
+  final couponController = TextEditingController();
 
   // =======================
   // COUNTDOWN TIMER (7:30)
@@ -41,6 +43,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     nameController.dispose();
     emailController.dispose();
     phoneController.dispose();
+    couponController.dispose();
     super.dispose();
   }
 
@@ -169,7 +172,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ],
           ),
 
-          const SizedBox(height: 152),
+          const SizedBox(height: 142),
 
           _inputField(
             label: 'Name',
@@ -185,7 +188,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             },
           ),
 
-          const SizedBox(height: 30),
+          const SizedBox(height: 12),
 
           _inputField(
             label: 'Email',
@@ -358,6 +361,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         const Divider(color: Colors.white24, height: 36),
 
         _summaryRow('Total', '₹$total', bold: true),
+
+        const SizedBox(height: 28),
+
+        CouponCodeWidget(
+          controller: couponController,
+          onApply: () {
+            print('Coupon Applied: ${couponController.text}');
+          },
+        ),
       ],
     );
   }
@@ -389,6 +401,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   // ============================================================
   Widget _bottomCheckoutBar(TicketProvider provider, int total) {
     return Container(
+      height: 120,
       padding: const EdgeInsets.symmetric(horizontal: 236, vertical: 18),
       decoration: const BoxDecoration(
         color: Color(0xFF1C1C1C),
@@ -399,13 +412,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         children: [
           Text(
             'Total: ₹$total',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CFF78),
+              backgroundColor: const Color(0xFF4CFF38),
               foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 52, vertical: 26),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -432,7 +445,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               print('Total: ₹$total');
               print('----------------------');
             },
-            child: const Text('Checkout'),
+            child: const Text(
+              'Proceed',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
           ),
         ],
       ),
