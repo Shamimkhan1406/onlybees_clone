@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/ticket_provider.dart';
 import 'screens/event_screen.dart';
 
 void main() {
-  runApp(const OnlyBeesApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => TicketProvider(), // ❌ REMOVE loadSections()
+      child: const OnlyBeesApp(),
+    ),
+  );
 }
 
 class OnlyBeesApp extends StatelessWidget {

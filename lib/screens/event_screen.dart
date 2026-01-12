@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onlybees_clone/screens/tickets_screen.dart';
 
 class EventScreen extends StatelessWidget {
   const EventScreen({super.key});
@@ -42,7 +43,7 @@ class EventScreen extends StatelessWidget {
                           // =======================
                           // RIGHT SIDE (POSTER + PRICE)
                           // =======================
-                          Expanded(flex: 1, child: _rightSection()),
+                          Expanded(flex: 1, child: _rightSection(context)),
                         ],
                       ),
                       const Divider(color: Colors.white24, thickness: 1),
@@ -211,7 +212,7 @@ class EventScreen extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: Image.asset(
-                '/Users/shamimkhan/Desktop/Flutter_projects/onlybees_clone/assets/images/artist.jpg', // add this image
+                'assets/images/artist.jpg', // add this image
                 width: 90,
                 height: 90,
                 fit: BoxFit.cover,
@@ -241,7 +242,7 @@ class EventScreen extends StatelessWidget {
   // =======================
   // RIGHT SECTION (POSTER + PRICE)
   // =======================
-  Widget _rightSection() {
+  Widget _rightSection(BuildContext context) {
     return Column(
       children: [
         ClipRRect(
@@ -286,7 +287,14 @@ class EventScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TicketsScreen(),
+                    ),
+                  );
+                },
                 child: const Text('Book Now ▶'),
               ),
             ],
