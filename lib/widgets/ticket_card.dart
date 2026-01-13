@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:onlybees_clone/utils/responsive.dart';
 import '../models/section_model.dart';
-
-// =======================
-// TICKET CARD UI
-// =======================
-// Displays one ticket section
 
 class TicketCard extends StatelessWidget {
   final SectionModel section;
@@ -43,6 +39,8 @@ class TicketCard extends StatelessWidget {
               children: [
                 Text(
                   section.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -53,32 +51,38 @@ class TicketCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      '₹${section.price}',
-                      style: TextStyle(
-                        color:
-                            isSoldOut
-                                ? Color.fromARGB(255, 69, 93, 75)
-                                : Color(0xFF00FF38),
-                        fontWeight: FontWeight.bold,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '₹${section.price}',
+                        style: TextStyle(
+                          color:
+                              isSoldOut
+                                  ? const Color.fromARGB(255, 69, 93, 75)
+                                  : const Color(0xFF00FF38),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Exel. taxes',
-                      style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        color:
-                            isSoldOut
-                                ? const Color.fromARGB(255, 112, 111, 111)
-                                : Colors.grey,
+                      const SizedBox(width: 10),
+                      Text(
+                        'Exel. taxes',
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              isSoldOut
+                                  ? const Color.fromARGB(255, 112, 111, 111)
+                                  : Colors.grey,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+
                 const SizedBox(height: 5),
                 const Divider(color: Color.fromARGB(60, 61, 61, 61)),
                 const SizedBox(height: 5),
@@ -90,39 +94,56 @@ class TicketCard extends StatelessWidget {
             ),
           ),
 
+          const SizedBox(width: 12),
+
           // =======================
           // RIGHT: Quantity Control
           // =======================
-          isSoldOut
-              ? Container(
-                height: 40,
-                width: 80,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color.fromARGB(255, 82, 81, 81)),
-                ),
-                child: const Text(
-                  'Sold Out',
-                  style: TextStyle(color: Color.fromARGB(255, 162, 72, 72), fontWeight: FontWeight.bold),
-                ),
-              )
-              : Row(
-                children: [
-                  IconButton(
-                    onPressed: onRemove,
-                    icon: const Icon(Icons.remove_circle_outline),
-                  ),
-                  Text(
-                    section.selectedQuantity.toString(),
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  IconButton(
-                    onPressed: onAdd,
-                    icon: const Icon(Icons.add_circle_outline),
-                  ),
-                ],
-              ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child:
+                isSoldOut
+                    ? Container(
+                      height: Responsive.clampWidth(context, 32),
+                      width: Responsive.clampWidth(context, 80),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 82, 81, 81),
+                        ),
+                      ),
+                      child: const Text(
+                        'Sold Out',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 162, 72, 72),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                    : Row(
+                      children: [
+                        IconButton(
+                          onPressed: onRemove,
+                          icon: const Icon(Icons.remove_circle_outline),
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          section.selectedQuantity.toString(),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(width: 6),
+                        IconButton(
+                          onPressed: onAdd,
+                          icon: const Icon(Icons.add_circle_outline),
+                          constraints: const BoxConstraints(),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ],
+                    ),
+          ),
         ],
       ),
     );
