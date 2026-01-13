@@ -11,81 +11,53 @@ class TicketsScreen extends StatefulWidget {
   State<TicketsScreen> createState() => _TicketsScreenState();
 }
 
-// =======================
-// STATE CLASS (IMPORTANT)
-// =======================
 class _TicketsScreenState extends State<TicketsScreen> {
-  // 🔹 STEP 2: initState GOES HERE
   @override
   void initState() {
     super.initState();
-
-    // Call API when ticket screen opens
     Future.microtask(() {
       context.read<TicketProvider>().loadSections();
     });
   }
 
-  // 🔹 UI BUILD METHOD
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
       body: Column(
         children: [
-          // top right corner close button
+          // ✅ FIX 1: Removed Positioned from inside Align. 
+          // Align already handles the placement.
           Padding(
             padding: const EdgeInsets.only(top: 40, right: 40, bottom: 20),
             child: Align(
               alignment: Alignment.topRight,
-              child: // =======================
-              // TOP RIGHT CLOSE BUTTON
-              // =======================
-              Positioned(
-                top: 24,
-                right: 24,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.all(12),
-                    shape: const CircleBorder(),
-                  ),
-                  child: const Icon(Icons.close, color: Colors.black),
-                  onPressed: () => Navigator.pop(context),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.all(12),
+                  shape: const CircleBorder(),
                 ),
+                child: const Icon(Icons.close, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
           ),
-          // =======================
-          // MAIN CONTENT
-          // =======================
+          
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 270),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // =======================
-                  // LEFT: TICKETS LIST
-                  // =======================
                   Expanded(flex: 1, child: _ticketsList()),
-
                   const SizedBox(width: 32),
-
-                  // =======================
-                  // RIGHT: VENUE LAYOUT IMAGE
-                  // =======================
                   Expanded(flex: 1, child: _venueLayout()),
                 ],
               ),
             ),
           ),
-
-          // =======================
-          // BOTTOM CHECKOUT BAR
-          // =======================
           _checkoutBar(),
         ],
       ),
@@ -93,9 +65,6 @@ class _TicketsScreenState extends State<TicketsScreen> {
   }
 }
 
-// =======================
-// TICKETS LIST (LEFT COLUMN)
-// =======================
 Widget _ticketsList() {
   return Padding(
     padding: const EdgeInsets.all(8.0),
@@ -106,12 +75,11 @@ Widget _ticketsList() {
           'Tickets',
           style: TextStyle(
             fontSize: 36,
-            color: Color( 0xFF00FF38),
+            color: Color(0xFF00FF38),
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 24),
-
         Expanded(
           child: Consumer<TicketProvider>(
             builder: (context, provider, _) {
@@ -119,15 +87,15 @@ Widget _ticketsList() {
                 return const Center(child: CircularProgressIndicator());
               }
 
+              // ✅ FIX 2: Removed the redundant nested Expanded.
               return ListView(
-                children:
-                    provider.sections.map((section) {
-                      return TicketCard(
-                        section: section,
-                        onAdd: () => provider.increment(section),
-                        onRemove: () => provider.decrement(section),
-                      );
-                    }).toList(),
+                children: provider.sections.map((section) {
+                  return TicketCard(
+                    section: section,
+                    onAdd: () => provider.increment(section),
+                    onRemove: () => provider.decrement(section),
+                  );
+                }).toList(),
               );
             },
           ),
@@ -137,9 +105,6 @@ Widget _ticketsList() {
   );
 }
 
-// =======================
-// VENUE LAYOUT (RIGHT COLUMN)
-// =======================
 Widget _venueLayout() {
   return Column(
     children: [
@@ -149,9 +114,6 @@ Widget _venueLayout() {
   );
 }
 
-// =======================
-// BOTTOM CHECKOUT BAR
-// =======================
 Widget _checkoutBar() {
   return Consumer<TicketProvider>(
     builder: (context, provider, _) {
@@ -174,27 +136,23 @@ Widget _checkoutBar() {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color( 0xFF00FF38),
+                backgroundColor: const Color(0xFF00FF38),
                 foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 52,
-                  vertical: 26,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 52, vertical: 26),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              onPressed:
-                  provider.totalTickets > 0
-                      ? () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const CheckoutScreen(),
-                          ),
-                        );
-                      }
-                      : null,
+              onPressed: provider.totalTickets > 0
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CheckoutScreen(),
+                        ),
+                      );
+                    }
+                  : null,
               child: const Text('Proceed'),
             ),
           ],

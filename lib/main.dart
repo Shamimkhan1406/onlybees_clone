@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/ticket_provider.dart';
 import 'screens/event_screen.dart';
 
+
 void main() {
   runApp(
     ChangeNotifierProvider(
