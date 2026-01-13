@@ -77,7 +77,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     final w = MediaQuery.of(context).size.width;
 
-    // ✅ Responsive page padding (removes constant big margins)
+    // Responsive page padding (removes constant big margins)
     final horizontalPadding = w < 350
         ? 12.0
         : w < 600
@@ -89,7 +89,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      // ✅ Sticky bottom bar
+      // Sticky bottom bar
       bottomNavigationBar: _bottomCheckoutBar(provider, total),
 
       body: SafeArea(
@@ -110,7 +110,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       builder: (context, constraints) {
                         final isSmall = constraints.maxWidth < 700;
 
-                        // ✅ Small screen: summary below form
+                        // Small screen: summary below form
                         if (isSmall) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +143,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           );
                         }
 
-                        // ✅ Desktop: keep same UI (2 columns)
+                        // Desktop: keep same UI (2 columns)
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -219,7 +219,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ],
           ),
 
-          // ✅ Instead of fixed 142px (causes overflow on small screen)
+          //Instead of fixed 142px (causes overflow on small screen)
           SizedBox(height: MediaQuery.of(context).size.width < 600 ? 40 : 142),
 
           _inputField(
@@ -501,7 +501,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             final isTight = constraints.maxWidth < 420;
 
             if (isTight) {
-              // ✅ stack in tight mode
+              // stack in tight mode
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -565,7 +565,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               );
             }
 
-            // ✅ desktop same row UI
+            // desktop same row UI
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
