@@ -5,7 +5,7 @@
 //   final String info;
 //   final int availableQuantity;
 
-//   // 👇 THIS FIELD IS REQUIRED
+//   // THIS FIELD IS REQUIRED
 //   int selectedQuantity;
 
 //   SectionModel({
