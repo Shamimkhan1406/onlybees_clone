@@ -75,69 +75,117 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     const bookingFee = 118;
     final total = provider.totalPrice + gst + bookingFee;
 
+    final w = MediaQuery.of(context).size.width;
+
+    // ✅ Responsive page padding (removes constant big margins)
+    final horizontalPadding = w < 350
+        ? 12.0
+        : w < 600
+            ? 16.0
+            : w < 900
+                ? 40.0
+                : 248.0;
+
     return Scaffold(
       backgroundColor: Colors.black,
 
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              // =======================
-              // SCROLLABLE CONTENT
-              // =======================
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 248,
-                    vertical: 36,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // =======================
-                      // LEFT COLUMN – FORM
-                      // =======================
-                      Expanded(flex: 1, child: _leftForm()),
+      // ✅ Sticky bottom bar
+      bottomNavigationBar: _bottomCheckoutBar(provider, total),
 
-                      const SizedBox(width: 90),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                // =======================
+                // SCROLLABLE CONTENT ONLY
+                // =======================
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: w < 600 ? 20 : 36,
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isSmall = constraints.maxWidth < 700;
 
-                      // =======================
-                      // RIGHT COLUMN – SUMMARY
-                      // =======================
-                      Expanded(
-                        flex: 1,
-                        child: _orderSummary(provider, gst, bookingFee, total),
-                      ),
-                    ],
+                        // ✅ Small screen: summary below form
+                        if (isSmall) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Poster at the top
+                              Image.asset('assets/images/mohombi.jpg', height: 220),
+                              const SizedBox(height: 14),
+                              // Event description below poster
+                              const Text(
+                                'Mohombi Live in\nShillong',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 6),
+                              const Text(
+                                'Larit, Mawdiangdiang',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              const Text(
+                                'Sat, Oct 25, 2025',
+                                style: TextStyle(color: Colors.greenAccent),
+                              ),
+                              const Text('Shillong', style: TextStyle(color: Colors.white)),
+                              const SizedBox(height: 30),
+                              // Input fields below event info
+                              _leftForm(),
+                              const SizedBox(height: 30),
+                              _orderSummary(provider, gst, bookingFee, total, skipEventInfo: true),
+                              const SizedBox(height: 30),
+                            ],
+                          );
+                        }
+
+                        // ✅ Desktop: keep same UI (2 columns)
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 1, child: _leftForm()),
+                            const SizedBox(width: 90),
+                            Expanded(
+                              flex: 1,
+                              child: _orderSummary(
+                                provider,
+                                gst,
+                                bookingFee,
+                                total,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-
-              // =======================
-              // FIXED BOTTOM BAR
-              // =======================
-              _bottomCheckoutBar(provider, total),
-            ],
-          ),
-
-          // =======================
-          // TOP RIGHT CLOSE BUTTON
-          // =======================
-          Positioned(
-            top: 24,
-            right: 24,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.all(12),
-                shape: const CircleBorder(),
-              ),
-              child: const Icon(Icons.close, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+              ],
             ),
-          ),
-        ],
+
+            // =======================
+            // TOP RIGHT CLOSE BUTTON (FIXED)
+            // =======================
+            Positioned(
+              top: 8,
+              right: 8,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.all(12),
+                  shape: const CircleBorder(),
+                ),
+                child: const Icon(Icons.close, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -159,31 +207,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 6),
 
           Row(
             children: [
-              Text('Time left: ', style: const TextStyle(color: Colors.white)),
+              const Text('Time left: ', style: TextStyle(color: Colors.white)),
               Text(
-                '$formattedTime',
+                formattedTime,
                 style: const TextStyle(color: Colors.green),
               ),
             ],
           ),
 
-          const SizedBox(height: 142),
+          // ✅ Instead of fixed 142px (causes overflow on small screen)
+          SizedBox(height: MediaQuery.of(context).size.width < 600 ? 40 : 142),
 
           _inputField(
             label: 'Name',
             controller: nameController,
             validator: (v) {
-              if (v == null || v.trim().isEmpty) {
-                return 'Name is required';
-              }
-              if (v.trim().length < 3) {
-                return 'Name must be at least 3 characters';
-              }
+              if (v == null || v.trim().isEmpty) return 'Name is required';
+              if (v.trim().length < 3) return 'Name must be at least 3 characters';
               return null;
             },
           ),
@@ -195,13 +239,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             hint: 'you@example.com',
             controller: emailController,
             validator: (v) {
-              if (v == null || v.isEmpty) {
-                return 'Email is required';
-              }
+              if (v == null || v.isEmpty) return 'Email is required';
               final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-              if (!regex.hasMatch(v)) {
-                return 'Enter a valid email';
-              }
+              if (!regex.hasMatch(v)) return 'Enter a valid email';
               return null;
             },
           ),
@@ -219,9 +259,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             prefix: '🇮🇳  +91 ',
             controller: phoneController,
             validator: (v) {
-              if (v == null || v.isEmpty) {
-                return 'Phone number is required';
-              }
+              if (v == null || v.isEmpty) return 'Phone number is required';
               if (!RegExp(r'^\d{10}$').hasMatch(v)) {
                 return 'Enter a valid 10-digit number';
               }
@@ -285,41 +323,73 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     TicketProvider provider,
     int gst,
     int bookingFee,
-    int total,
-  ) {
+    int total, {
+    bool skipEventInfo = false,
+  }) {
+    final w = MediaQuery.of(context).size.width;
+    final isSmall = w < 900;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Image.asset('assets/images/mohombi.jpg', height: 220),
+        if (!skipEventInfo)
+          isSmall
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset('assets/images/mohombi.jpg', height: 220),
+                    const SizedBox(height: 14),
+                    const Text(
+                      'Mohombi Live in\nShillong',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Larit, Mawdiangdiang',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    const Text(
+                      'Sat, Oct 25, 2025',
+                      style: TextStyle(color: Colors.greenAccent),
+                    ),
+                    const Text('Shillong', style: TextStyle(color: Colors.white)),
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      flex: 0,
+                      child: Image.asset('assets/images/mohombi.jpg', height: 220),
+                    ),
+                    const SizedBox(width: 18),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Mohombi Live in\nShillong',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 6),
+                            Text(
+                              'Larit, Mawdiangdiang',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                              'Sat, Oct 25, 2025',
+                              style: TextStyle(color: Colors.greenAccent),
+                            ),
+                            Text('Shillong', style: TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
 
-            const SizedBox(height: 18),
-
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Mohombi Live in\nShillong',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Larit, Mawdiangdiang',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  const Text(
-                    'Sat, Oct 25, 2025',
-                    style: TextStyle(color: Colors.greenAccent),
-                  ),
-                  const Text('Shillong', style: TextStyle(color: Colors.white)),
-                ],
-              ),
-            ),
-          ],
-        ),
         const SizedBox(height: 34),
 
         const Text(
@@ -339,12 +409,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               (s) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '${s.name} x${s.selectedQuantity}',
-                      style: const TextStyle(color: Colors.white70),
+                    Expanded(
+                      child: Text(
+                        '${s.name} x${s.selectedQuantity}',
+                        style: const TextStyle(color: Colors.white70),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
+                    const SizedBox(width: 12),
                     Text(
                       '₹${s.price * s.selectedQuantity}',
                       style: const TextStyle(color: Colors.white),
@@ -376,13 +450,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _summaryRow(String label, String value, {bool bold = false}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         ),
         Text(
@@ -397,64 +472,159 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // ============================================================
-  // BOTTOM BAR
+  // BOTTOM BAR (STICKY + RESPONSIVE)
   // ============================================================
   Widget _bottomCheckoutBar(TicketProvider provider, int total) {
-    return Container(
-      height: 120,
-      padding: const EdgeInsets.symmetric(horizontal: 236, vertical: 18),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1C1C1C),
-        border: Border(top: BorderSide(color: Colors.white24)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Total: ₹$total',
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CFF38),
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: 52, vertical: 26),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-            onPressed: () {
-              if (!_formKey.currentState!.validate()) return;
+    final w = MediaQuery.of(context).size.width;
 
-              // =======================
-              // PRINT DATA TO TERMINAL
-              // =======================
-              print('--- CHECKOUT DATA ---');
-              print('Name: ${nameController.text}');
-              print('Email: ${emailController.text}');
-              print('Phone: ${phoneController.text}');
+    final horizontalPad = w < 350
+        ? 12.0
+        : w < 600
+            ? 16.0
+            : w < 900
+                ? 40.0
+                : 236.0;
 
-              for (final s in provider.sections) {
-                if (s.selectedQuantity > 0) {
-                  print(
-                    '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}',
-                  );
-                }
-              }
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: horizontalPad,
+          vertical: w < 600 ? 12 : 18,
+        ),
+        decoration: const BoxDecoration(
+          color: Color(0xFF1C1C1C),
+          border: Border(top: BorderSide(color: Colors.white24)),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isTight = constraints.maxWidth < 420;
 
-              print('Total: ₹$total');
-              print('----------------------');
-            },
-            child: const Text(
-              'Proceed',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
+            if (isTight) {
+              // ✅ stack in tight mode
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Total: ₹$total',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CFF38),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (!_formKey.currentState!.validate()) return;
+
+                        print('--- CHECKOUT DATA ---');
+                        print('Name: ${nameController.text}');
+                        print('Email: ${emailController.text}');
+                        print('Phone: ${phoneController.text}');
+
+                        for (final s in provider.sections) {
+                          if (s.selectedQuantity > 0) {
+                            print(
+                              '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}',
+                            );
+                          }
+                        }
+
+                        print('Total: ₹$total');
+                        print('----------------------');
+                      },
+                      child: const Text(
+                        'Proceed',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            // ✅ desktop same row UI
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    'Total: ₹$total',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4CFF38),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 52,
+                      vertical: 26,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    print('--- CHECKOUT DATA ---');
+                    print('Name: ${nameController.text}');
+                    print('Email: ${emailController.text}');
+                    print('Phone: ${phoneController.text}');
+
+                    for (final s in provider.sections) {
+                      if (s.selectedQuantity > 0) {
+                        print(
+                          '${s.name} x${s.selectedQuantity} = ₹${s.price * s.selectedQuantity}',
+                        );
+                      }
+                    }
+
+                    print('Total: ₹$total');
+                    print('----------------------');
+                  },
+                  child: const Text(
+                    'Proceed',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
