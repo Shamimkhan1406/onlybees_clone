@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onlybees_clone/screens/tickets_screen.dart';
+import 'package:onlybees_clone/utils/responsive.dart';
 
 class EventScreen extends StatelessWidget {
   const EventScreen({super.key});
@@ -23,7 +24,9 @@ class EventScreen extends StatelessWidget {
               child: Center(
                 // This centers the PAGE, not the text
                 child: Container(
-                  constraints: const BoxConstraints(maxWidth: 1200),
+                  constraints: BoxConstraints(
+                    maxWidth: Responsive.clampWidth(context, 950),
+                  ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 32,
@@ -31,7 +34,9 @@ class EventScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Responsive.clampWidth(context, 20),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -41,9 +46,11 @@ class EventScreen extends StatelessWidget {
                                 // =======================
                                 // LEFT SIDE (TEXT CONTENT)
                                 // =======================
-                                Expanded(flex: 2, child: _leftSection()),
+                                Expanded(flex: 2, child: _leftSection(context)),
 
-                                const SizedBox(width: 32),
+                                SizedBox(
+                                  width: Responsive.clampWidth(context, 24),
+                                ),
 
                                 // =======================
                                 // RIGHT SIDE (POSTER + PRICE)
@@ -55,7 +62,9 @@ class EventScreen extends StatelessWidget {
                               ],
                             ),
 
-                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: Responsive.clampWidth(context, 40),
+                            ),
                             Text(
                               'Event Guide',
                               style: TextStyle(
@@ -83,7 +92,7 @@ class EventScreen extends StatelessWidget {
                         ),
                       ),
                       //const Divider(color: Colors.white24, thickness: 1),
-                      const SizedBox(height: 40),
+                      SizedBox(height: Responsive.clampWidth(context, 60)),
                       _footer(),
                     ],
                   ),
@@ -123,7 +132,7 @@ class EventScreen extends StatelessWidget {
   // =======================
   // LEFT SECTION (EVENT INFO)
   // =======================
-  Widget _leftSection() {
+  Widget _leftSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end, // IMPORTANT
       children: [
@@ -170,14 +179,18 @@ class EventScreen extends StatelessWidget {
 
         // Tabs placeholder (About | Venue | T&C | FAQ)
         SizedBox(
-          width: 500,
-          child: Row(
-            children: const [
-              _TabItem(title: 'About', active: true),
-              _TabItem(title: 'Venue Layout'),
-              _TabItem(title: 'Terms and Conditions'),
-              _TabItem(title: 'FAQ'),
-            ],
+          width: Responsive.clampWidth(context, 500),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            child: Row(
+              children: const [
+                _TabItem(title: 'About', active: true),
+                _TabItem(title: 'Venue Layout'),
+                _TabItem(title: 'Terms and Conditions'),
+                _TabItem(title: 'FAQ'),
+              ],
+            ),
           ),
         ),
 
@@ -185,8 +198,8 @@ class EventScreen extends StatelessWidget {
 
         // About card
         Container(
-          height: 270,
-          width: 500,
+          height: Responsive.clampWidth(context, 270),
+          width: Responsive.clampWidth(context, 500),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: const Color(0xFF1C1C1C),
@@ -226,53 +239,136 @@ class EventScreen extends StatelessWidget {
         const SizedBox(height: 20),
 
         Container(
-          height: 140,
-          padding: const EdgeInsets.all(20),
+          //height: Responsive.clampWidth(context, 140),
+          padding: EdgeInsets.all(Responsive.clampWidth(context, 20)),
           decoration: BoxDecoration(
             color: const Color(0xFF1C1C1C),
             borderRadius: BorderRadius.circular(18),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isTight = constraints.maxWidth < 360; // you can adjust 360
+
+              if (!isTight) {
+                // ✅ Normal layout (Row)
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        Text(
+                          'STARTING',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '₹799',
+                          style: TextStyle(
+                            fontSize: Responsive.clampFont(context, 38),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00FF38),
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Responsive.clampWidth(context, 48),
+                          vertical: Responsive.clampWidth(context, 24),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TicketsScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Book Now ▶',
+                        style: TextStyle(
+                          fontSize: Responsive.clampFont(context, 14),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              // ✅ Small width layout (Button goes below)
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  const SizedBox(height: 8),
-                  Text(
-                    'STARTING',
-                    style: TextStyle(color: Colors.white, fontSize: 8,fontWeight: FontWeight.bold),
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        'STARTING',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '₹799',
+                        style: TextStyle(
+                          fontSize: Responsive.clampFont(context, 38),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    '₹799',
-                    style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
+                  SizedBox(height: Responsive.clampWidth(context, 12)),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00FF38),
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Responsive.clampWidth(context, 48),
+                          vertical: Responsive.clampWidth(context, 24),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TicketsScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Book Now ▶',
+                        style: TextStyle(
+                          fontSize: Responsive.clampFont(context, 14),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color( 0xFF00FF38),
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 48,
-                    vertical: 24,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TicketsScreen(),
-                    ),
-                  );
-                },
-                child: const Text('Book Now ▶'),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ],
@@ -326,7 +422,7 @@ class _GuideItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Color( 0xFF00FF38), size: 20),
+        Icon(icon, color: Color(0xFF00FF38), size: 20),
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,28 +480,65 @@ Widget _eventGuide() {
   return // =======================
   // EVENT GUIDE CARD
   // =======================
-  Container(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-    decoration: BoxDecoration(
-      color: const Color(0xFF1C1C1C),
-      borderRadius: BorderRadius.circular(14),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: const [
-        SizedBox(width: 8),
-        _GuideItem(icon: Icons.translate, label: 'Language', value: 'English'),
-        SizedBox(width: 38),
-        _GuideItem(icon: Icons.schedule, label: 'Duration', value: 'TBI'),
-        SizedBox(width: 38),
-        _GuideItem(
-          icon: Icons.airplane_ticket,
-          label: 'Entry Allowed',
-          value: '14 yrs & above',
+  LayoutBuilder(
+    builder: (context, constraints) {
+      final isWide = constraints.maxWidth > 600;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1C1C1C),
+          borderRadius: BorderRadius.circular(14),
         ),
-        SizedBox(width: 38),
-      ],
-    ),
+        child:
+            isWide
+                ? Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: const [
+                    SizedBox(width: 8),
+                    _GuideItem(
+                      icon: Icons.translate,
+                      label: 'Language',
+                      value: 'English',
+                    ),
+                    SizedBox(width: 38),
+                    _GuideItem(
+                      icon: Icons.schedule,
+                      label: 'Duration',
+                      value: 'TBI',
+                    ),
+                    SizedBox(width: 38),
+                    _GuideItem(
+                      icon: Icons.airplane_ticket,
+                      label: 'Entry Allowed',
+                      value: '14 yrs & above',
+                    ),
+                    SizedBox(width: 38),
+                  ],
+                )
+                : Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: const [
+                    _GuideItem(
+                      icon: Icons.translate,
+                      label: 'Language',
+                      value: 'English',
+                    ),
+                    _GuideItem(
+                      icon: Icons.schedule,
+                      label: 'Duration',
+                      value: 'TBI',
+                    ),
+                    _GuideItem(
+                      icon: Icons.airplane_ticket,
+                      label: 'Entry Allowed',
+                      value: '14 yrs & above',
+                    ),
+                  ],
+                ),
+      );
+    },
   );
 }
 
@@ -464,18 +597,21 @@ Widget _footer() {
 
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text(
-              'Copyright © Onlybees 2025, KL & Sons - ONLYBEES',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-            Text(
-              'Privacy Policy     Terms and Conditions',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
-            ),
-          ],
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: const [
+              Text(
+                'Copyright © Onlybees 2025, KL & Sons - ONLYBEES',
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+              Text(
+                'Privacy Policy     Terms and Conditions',
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ],
+          ),
         ),
       ),
     ],
